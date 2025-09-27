@@ -27,6 +27,13 @@ export const Recipe = {
 		calcium: { type: 'number' },
 		iron: { type: 'number' }
 	},
+	async list(sortKey) {
+		const all = getStoredRecipes();
+		if (sortKey === '-created_date') {
+			return all.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+		}
+		return all;
+	},
 	async filter(query, sortKey) {
 		const all = getStoredRecipes();
 		const filtered = all.filter(r => r.created_by && r.created_by === query.created_by);

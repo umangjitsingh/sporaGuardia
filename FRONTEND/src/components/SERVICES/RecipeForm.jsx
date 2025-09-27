@@ -1,12 +1,19 @@
-// import React, { useEffect, useState } from 'react';
-// import { Recipe } from '../../recipe.js';
-// import  uploadFile  from '../../uploadFile.js';
-//
-// import { Input } from '../ui/Input.jsx';
-// import { Label } from '../ui/Label.jsx';
-// import  Button  from '../Button.jsx';
-// import { Loader2, Save, Trash2, Upload } from 'lucide-react';
-//
+
+
+import React, { useState, useEffect } from 'react';
+import { Recipe } from '../../recipe.js';
+import  UploadFile  from '../../uploadFile.js';
+import { Input } from '../ui/Input.jsx';
+import { Label } from '../ui/Label.jsx';
+import  Button  from '../Button.jsx';
+import { Loader2, Save, Trash2 } from 'lucide-react';
+import { Card } from '../ui/Card.jsx';
+import { CardHeader } from '../ui/CardHeader.jsx';
+import { CardTitle } from '../ui/CardTitle.jsx';
+import { CardContent } from '../ui/CardContent.jsx';
+import {CardFooter} from '../ui/CardFooter.jsx';
+import {User} from '../../user.js'
+
 // const emptyRecipe = {
 // 	name: '', serving_size: '1 serving', image_url: '', calories: 0,
 // 	total_fat: 0, saturated_fat: 0, trans_fat: 0, cholesterol: 0, sodium: 0,
@@ -29,7 +36,7 @@
 // 		const new_val = type === 'number' ? parseFloat(value) || 0 : value;
 // 		const updated = { ...formData, [id]: new_val };
 // 		setFormData(updated);
-// 		if (onUpdate) onUpdate(updated);
+// 		onUpdate(updated);
 // 	};
 //
 // 	const handleImageChange = (e) => {
@@ -38,48 +45,53 @@
 // 		}
 // 	};
 //
+// 	//
 // 	const handleSave = async () => {
 // 		setIsSaving(true);
-// 		let finalData = { ...formData };
-// 		console.log("trying to save")
+// 		try {
+// 			let finalData = { ...formData };
 //
-// 		if (imageFile) {
-// 			const { file_url } = await uploadFile({ file: imageFile });
-// 			finalData.image_url = file_url;
+// 			if (imageFile) {
+// 				// const { file_url } = await UploadFile({ file: imageFile });
+// 				// finalData.image_url = file_url;
+// 				try {
+// 					const { file_url } = await UploadFile({ file: imageFile });
+// 					finalData.image_url = file_url;
+// 				} catch (error) {
+// 					console.error('Image upload failed:', error);
+// 					// Continue without image if upload fails
+// 				}
+// 			}
+//
+// 			if (selectedRecipe?.id) {
+// 				const updatedRecipe = await Recipe.update(selectedRecipe.id, finalData);
+// 				onSaveSuccess(updatedRecipe);
+// 			} else {
+// 				// const user = await User.me();
+// 				// finalData.created_by = user.email; // Add this line
+// 				try {
+// 					const user = await User.me();
+// 					finalData.created_by = user.email;
+// 				} catch (error) {
+// 					console.error('User fetch failed:', error);
+// 					finalData.created_by = 'anonymous@example.com';
+// 				}
+// 				const newRecipe = await Recipe.create(finalData);
+// 				onSaveSuccess(newRecipe);
+// 			}
+//
+// 			if (!selectedRecipe) {
+// 				setFormData(emptyRecipe);
+// 				setImageFile(null);
+// 			}
+//
+//
+//
+// 		} catch (error) {
+// 			console.error('Save failed:', error);
 // 		}
-//
-// 		// if (selectedRecipe) {
-// 		// 	// It's an update, but SDK doesn't have update, so we create a new one and tell parent to delete old.
-// 		// 	// A better approach would be full update support.
-// 		// 	const newRecipe = await Recipe.create(finalData);
-// 		// 	await Recipe.delete(selectedRecipe.id);
-// 		// 	onSaveSuccess(newRecipe);
-// 		// } else {
-// 		// 	const newRecipe = await Recipe.create(finalData);
-// 		// 	onSaveSuccess(newRecipe);
-// 		// }
-//
-// 		if (selectedRecipe && selectedRecipe.id) {
-// 			// It's an update
-// 			const updatedRecipe = await Recipe.update(selectedRecipe.id, finalData);
-// 			onSaveSuccess(updatedRecipe);
-// 		} else {
-// 			// It's a new creation
-// 			const newRecipe = await Recipe.create(finalData);
-// 			onSaveSuccess(newRecipe);
-// 		}
-//
-// 		setFormData(selectedRecipe || emptyRecipe); // Reset form
-// 		setImageFile(null);
 // 		setIsSaving(false);
 // 	};
-//
-// 	if (!selectedRecipe) {
-// 		setFormData(emptyRecipe);
-// 		setImageFile(null);
-// 	}
-// 	setIsSaving(false);
-// };
 //
 // 	const handleDelete = async () => {
 // 		if (!selectedRecipe) return;
@@ -88,8 +100,6 @@
 // 		onDeleteSuccess(selectedRecipe.id);
 // 		setIsDeleting(false);
 // 	};
-//
-//
 //
 // 	const inputFields = [
 // 		{ id: 'calories', label: 'Calories', unit: 'kcal' },
@@ -108,11 +118,11 @@
 // 	];
 //
 // 	return (
-// 		<div>
-// 			<div>
-// 				<div className="text-black/80 font-bold text-lg pb-8  font-inter text-shadow-sm">{selectedRecipe ? 'Edit Recipe' : 'Create New Recipe'}</div>
-// 			</div>
-// 			<div className="space-y-4">
+// 		<Card>
+// 			<CardHeader>
+// 				<CardTitle>{selectedRecipe ? 'Edit Recipe' : 'Create New Recipe'}</CardTitle>
+// 			</CardHeader>
+// 			<CardContent className="space-y-4">
 // 				<div className="space-y-2">
 // 					<Label htmlFor="name">Recipe Name</Label>
 // 					<Input id="name" value={formData.name} onChange={handleInputChange} placeholder="e.g., Healthy Chicken Salad" />
@@ -134,8 +144,8 @@
 // 						</div>
 // 					))}
 // 				</div>
-// 			</div>
-// 			<div className="flex justify-between pt-2 sm:pt-1 scale-90 sm:scale-100">
+// 			</CardContent>
+// 			<CardFooter className="flex justify-between">
 // 				{selectedRecipe && (
 // 					<Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
 // 						{isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Trash2 className="mr-2 h-4 w-4"/>}
@@ -144,28 +154,14 @@
 // 				)}
 // 				{!selectedRecipe && <div></div>}
 // 				<Button onClick={handleSave} disabled={isSaving || !formData.name}>
-// 					{isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="w-8 h-8 inline-flex items-center justify-between pr-2 "/>}
+// 					{isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4"/>}
 // 					{selectedRecipe ? 'Update Recipe' : 'Save Recipe'}
 // 				</Button>
-// 			</div>
-// 		</div>
+// 			</CardFooter>
+// 		</Card>
 // 	);
 // }
 //
-
-import React, { useState, useEffect } from 'react';
-import { Recipe } from '../../recipe.js';
-import  UploadFile  from '../../uploadFile.js';
-import { Input } from '../ui/Input.jsx';
-import { Label } from '../ui/Label.jsx';
-import  Button  from '../Button.jsx';
-import { Loader2, Save, Trash2, Upload } from 'lucide-react';
-import { Card } from '../ui/Card.jsx';
-import { CardHeader } from '../ui/CardHeader.jsx';
-import { CardTitle } from '../ui/CardTitle.jsx';
-import { CardContent } from '../ui/CardContent.jsx';
-import {CardFooter} from '../ui/CardFooter.jsx';
-import {User} from '../../user.js'
 
 const emptyRecipe = {
 	name: '', serving_size: '1 serving', image_url: '', calories: 0,
@@ -182,6 +178,7 @@ export default function RecipeForm({ onUpdate, onSaveSuccess, onDeleteSuccess, s
 
 	useEffect(() => {
 		setFormData(selectedRecipe || emptyRecipe);
+		setImageFile(null); // Also reset the image file when selection changes
 	}, [selectedRecipe]);
 
 	const handleInputChange = (e) => {
@@ -198,36 +195,37 @@ export default function RecipeForm({ onUpdate, onSaveSuccess, onDeleteSuccess, s
 		}
 	};
 
-	//
 	const handleSave = async () => {
+		console.log("umang")
+
 		setIsSaving(true);
-		try {
-			let finalData = { ...formData };
+		let finalData = { ...formData };
 
-			if (imageFile) {
-				const { file_url } = await UploadFile({ file: imageFile });
-				finalData.image_url = file_url;
-			}
+		// Clear out the ID if it exists, as we don't want to pass it to the create/update payload.
+		delete finalData.id;
 
-			if (selectedRecipe?.id) {
-				const updatedRecipe = await Recipe.update(selectedRecipe.id, finalData);
-				onSaveSuccess(updatedRecipe);
-			} else {
-				const user = await User.me();
-				finalData.created_by = user.email; // Add this line
-				const newRecipe = await Recipe.create(finalData);
-				onSaveSuccess(newRecipe);
-			}
+		if (imageFile) {
+			const { file_url } = await UploadFile({ file: imageFile });
+			finalData.image_url = file_url;
+		}
 
-			// if (!selectedRecipe) {
-			// 	setFormData(emptyRecipe);
-			// 	setImageFile(null);
-			// }
+		if (selectedRecipe && selectedRecipe.id) {
+			// It's an update
+			const updatedRecipe = await Recipe.update(selectedRecipe.id, finalData);
+			onSaveSuccess(updatedRecipe);
+		} else {
+			// It's a new creation
+			const newRecipe = await Recipe.create(finalData);
+			onSaveSuccess(newRecipe);
+		}
 
-
-
-		} catch (error) {
-			console.error('Save failed:', error);
+		// This was the area with the issue.
+		// We should only reset the form if we are creating a *new* recipe.
+		if (!selectedRecipe) {
+			setFormData(emptyRecipe);
+			setImageFile(null);
+			// Also inform parent to clear the preview
+			onUpdate(null);
 		}
 		setIsSaving(false);
 	};
@@ -286,13 +284,13 @@ export default function RecipeForm({ onUpdate, onSaveSuccess, onDeleteSuccess, s
 			</CardContent>
 			<CardFooter className="flex justify-between">
 				{selectedRecipe && (
-					<Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
-						{isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Trash2 className="mr-2 h-4 w-4"/>}
-						Delete
+					<Button variant="destructive" onClick={handleDelete} disabled={isDeleting} size={'md'} className="flex gap-6 items-center justify-center w-48">
+						{isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Trash2 className=" h-5 w-5"/>}
+						Delete Recipe
 					</Button>
 				)}
-				{!selectedRecipe && <div></div>}
-				<Button onClick={handleSave} disabled={isSaving || !formData.name}>
+				{/*{!selectedRecipe && <div></div>}*/}
+				<Button onClick={handleSave} disabled={isSaving || !formData.name} size={'md'} className="flex gap-4 items-center justify-center w-48">
 					{isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Save className="mr-2 h-4 w-4"/>}
 					{selectedRecipe ? 'Update Recipe' : 'Save Recipe'}
 				</Button>
@@ -300,4 +298,3 @@ export default function RecipeForm({ onUpdate, onSaveSuccess, onDeleteSuccess, s
 		</Card>
 	);
 }
-
