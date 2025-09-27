@@ -1,14 +1,18 @@
 
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Recipe } from '../../recipe.js';
-import RecipeForm from './RecipeForm';
-import RecipeNutritionLabel from './RecipeNurtitionLabel.jsx';
-import SavedRecipesList from './SavedRecipiesList.jsx';
-import RecipeMixer from './RecipeMixer';
-import Button  from '../Button.jsx';
-import { Input } from '../ui/Input.jsx';
+import { Recipe } from '../recipe.js';
+import RecipeForm from '../components/SERVICES/RecipeForm.jsx';
+import RecipeNutritionLabel from '../components/SERVICES/RecipeNurtitionLabel.jsx';
+import SavedRecipesList from '../components/SERVICES/SavedRecipiesList.jsx';
+import RecipeMixer from '../components/SERVICES/RecipeMixer.jsx';
+import Button  from '../components/Button.jsx';
+import { Input } from '../components/ui/Input.jsx';
 import { PlusCircle, Blend, Search } from 'lucide-react';
+import leaf from '../assets/leave.png'
+import { PiChefHat } from "react-icons/pi";
+
+
 
 export default function ResearcherZone() {
 	const [recipes, setRecipes] = useState([]);
@@ -79,10 +83,23 @@ export default function ResearcherZone() {
 		setCurrentRecipeData(null);
 	}
 
-	return (
-		<div className="space-y-8 ">
+	return (<div className="p-16  ">
+			<div className="space-y-6 ">
+
+
+				<div className="bg-gradient-to-r from-gray-100 to-gray-300 p-12 rounded-xl shadow-lg mb-12">
+					<h1 className="text-4xl font-bold text-gray-800 flex items-center gap-4 tracking-tight">
+						<img src={leaf} alt="" className="h-16 w-20" />
+						Nutrition Facts Calculator
+					</h1>
+					<p className="mt-4 text-lg text-gray-700 font-medium">
+						Analyze, optimize, and visualize your recipes with precision.
+					</p>
+				</div>
+
+
 			<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center sm:justify-between gap-4 w-full ">
-				<h3 className="text-xl font-semibold text-gray-700 ">Saved Recipes</h3>
+
 				<div className="flex md:w-1/2 sm:w-auto items-center justify-center relative">
 
 					<Input
@@ -105,6 +122,8 @@ export default function ResearcherZone() {
 					</Button>
 				</div>
 			</div>
+				<h3 className="text-2xl font-medium text-gray-700 leading-2 pt-12 flex items-center justify-center gap-4 font-inter tracking-tighter">Saved Recipes <PiChefHat /></h3>
+
 			<RecipeMixer
 				isOpen={isMixerOpen}
 				setIsOpen={setIsMixerOpen}
@@ -133,5 +152,7 @@ export default function ResearcherZone() {
 				</div>
 			</div>
 		</div>
+	</div>
+
 	);
 }

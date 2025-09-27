@@ -1,11 +1,12 @@
-// src/entities/User.js
+
 
 export const User = {
 	// Simulate fetching the current user
 	async me() {
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
-				const isAuthenticated = true; // Change to false to simulate unauthenticated
+				const isAuthenticated = true;
+				 // Change to false to simulate unauthenticated
 				if (isAuthenticated) {
 					resolve({
 						id: 1,

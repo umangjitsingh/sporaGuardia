@@ -26,7 +26,7 @@ const Header = () => {
 	};
 
 	return (
-		<header className="bg-[#e8e8e8] shadow-md">
+		<header className="bg-[#e8e8e8] ">
 			<nav className="container mx-auto px-6 py-4 flex justify-between items-center transition-all duration-300">
 				{/* Logo */}
 				<Link to="/" className="flex items-center gap-2">

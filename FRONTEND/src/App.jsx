@@ -6,6 +6,8 @@ import Layout from './Layout.jsx';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import About from './PAGES/About.jsx';
 import Services from './PAGES/Services.jsx';
+import ResearcherZone from './PAGES/ResearcherZone.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 function App() {
 const router=createBrowserRouter([{
@@ -25,8 +27,17 @@ const router=createBrowserRouter([{
     },
     {
       element:<Services/>,
-      path:'/services'
+      path:'/services',
+    },
+    {
+      element: (
+         <ProtectedRoute>
+           <ResearcherZone />
+         </ProtectedRoute>
+      ),
+      path: '/services/nft',
     }
+
   ]
 }])
 
