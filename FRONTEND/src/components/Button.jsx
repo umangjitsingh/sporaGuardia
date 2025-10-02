@@ -11,7 +11,7 @@ const Button = ({ size = "md", variant = "solid", className = "", children ,onCl
 
 	const variantClasses = {
 		solid: "bg-gray-800 text-white hover:bg-transparent hover:text-gray-800 hover:border-2 hover:font-semibold",
-		outline: "border-2 border-gray-900 text-gray-900 hover:bg-gray-800 hover:text-white font-semibold",
+		outline: "border-2 border-gray-400 text-gray-600 hover:bg-gray-400 hover:text-white font-semibold",
 		ghost: "bg-transparent text-white hover:bg-white hover:text-black",
 		destructive:"bg-red-600 text-white hover:bg-white hover:text-red-600 hover:font-bold border-2 border-red-600 "
 	};

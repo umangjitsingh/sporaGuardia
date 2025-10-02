@@ -13,7 +13,7 @@ import { Loader2, Save, AlertCircle } from 'lucide-react';
 const nutrientFields = [
 	'calories', 'total_fat', 'saturated_fat', 'trans_fat', 'cholesterol',
 	'sodium', 'total_carbohydrates', 'dietary_fiber', 'total_sugars',
-	'protein', 'potassium', 'calcium', 'iron'
+	'protein', 'potassium', 'calcium', 'iron','vitamin_d','added_sugars'
 ];
 
 const parseServingGrams = (servingSize) => {
@@ -27,13 +27,51 @@ export default function RecipeMixer({ isOpen, setIsOpen, savedRecipes, onSaveSuc
 	const [amounts, setAmounts] = useState({});
 	const [newName, setNewName] = useState('');
 	const [isSaving, setIsSaving] = useState(false);
+	const [metadata, setMetadata] = useState({
+		container_name: '',
+		serving_size_name: '',
+		serving_size_value: 0,
+		serving_size_unit: 'g'
+	});
 
 	const eligibleRecipes = useMemo(() =>
 			savedRecipes.filter(r => parseServingGrams(r.serving_size)),
 		[savedRecipes]);
 
+	// const mixedRecipe = useMemo(() => {
+	// 	const newRecipe = { name: newName,container_name: '',
+	// 				serving_size_name: '',
+	// 				serving_size_value: 0,
+	// 				serving_size_unit: 'g', ...nutrientFields.reduce((acc, field) => ({ ...acc, [field]: 0 }), {}) };
+	//
+	// 	let totalGrams = 0;
+	//
+	// 	for (const recipeId in selected) {
+	// 		if (selected[recipeId]) {
+	// 			const recipe = savedRecipes.find(r => r.id === recipeId);
+	// 			const servingGrams = parseServingGrams(recipe.serving_size);
+	// 			const mixGrams = parseFloat(amounts[recipeId]) || 0;
+	//
+	// 			if (mixGrams > 0) {
+	// 				totalGrams += mixGrams;
+	// 				nutrientFields.forEach(field => {
+	// 					const nutrientPerGram = (recipe[field] || 0) / servingGrams;
+	// 					newRecipe[field] += nutrientPerGram * mixGrams;
+	// 				});
+	// 			}
+	// 		}
+	// 	}
+	//
+	// 	newRecipe.serving_size = `1 serving (${Math.round(totalGrams)}g)`;
+	// 	return totalGrams > 0 ? newRecipe : null;
+	// }, [selected, amounts, newName, savedRecipes]);
 	const mixedRecipe = useMemo(() => {
-		const newRecipe = { name: newName, ...nutrientFields.reduce((acc, field) => ({ ...acc, [field]: 0 }), {}) };
+		const newRecipe = {
+			name: newName,
+			...metadata,
+			...nutrientFields.reduce((acc, field) => ({ ...acc, [field]: 0 }), {})
+		};
+
 		let totalGrams = 0;
 
 		for (const recipeId in selected) {
@@ -53,19 +91,26 @@ export default function RecipeMixer({ isOpen, setIsOpen, savedRecipes, onSaveSuc
 		}
 
 		newRecipe.serving_size = `1 serving (${Math.round(totalGrams)}g)`;
+		newRecipe.total_weight = totalGrams;
 		return totalGrams > 0 ? newRecipe : null;
-	}, [selected, amounts, newName, savedRecipes]);
+	}, [selected, amounts, newName, metadata, savedRecipes]);
 
 	const handleSave = async () => {
 		if (!mixedRecipe || !mixedRecipe.name) return;
 		setIsSaving(true);
-		const { name, serving_size, ...nutrients } = mixedRecipe;
+		const { name, serving_size, container_name, serving_size_name, serving_size_value, serving_size_unit, ...nutrients } = mixedRecipe;
+
 		const finalData = {
 			name,
 			serving_size,
-			image_url: '', // Mixer doesn't handle images for now
+			container_name,
+			serving_size_name,
+			serving_size_value,
+			serving_size_unit,
+			image_url: '',
 			...nutrients
 		};
+
 		const saved = await Recipe.create(finalData);
 		onSaveSuccess(saved);
 		setIsSaving(false);
@@ -78,7 +123,7 @@ export default function RecipeMixer({ isOpen, setIsOpen, savedRecipes, onSaveSuc
 
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
-			<DialogContent className="sm:max-w-6xl relative min-h-screen">
+			<DialogContent className="sm:max-w-7xl relative ">
 				<DialogHeader>
 					<DialogTitle>Recipe Mixer</DialogTitle>
 					<DialogDescription>
@@ -123,19 +168,51 @@ export default function RecipeMixer({ isOpen, setIsOpen, savedRecipes, onSaveSuc
 							<Label htmlFor="new-name">2. Name Your New Mix</Label>
 							<Input id="new-name" placeholder="e.g., Power Lunch Mix" value={newName} onChange={e => setNewName(e.target.value)} />
 						</div>
+					{/*	*/}
+						<div className="space-y-2">
+							<Label htmlFor="container-name">3. Container Type</Label>
+
+							<Input
+								id="container-name"
+								placeholder="e.g., tray, bottle, pouch"
+								value={metadata.container_name}
+								onChange={e => setMetadata(p => ({ ...p, container_name: e.target.value }))}
+							/>
+
+							<Label htmlFor="serving-size-name">4. Serving Name</Label>
+							<Input
+								id="serving-size-name"
+								placeholder="e.g., 1 slice"
+								value={metadata.serving_size_name}
+								onChange={e => setMetadata(p => ({ ...p, serving_size_name: e.target.value }))}
+							/>
+
+							<div className="flex gap-2">
+								<Input
+									type="number"
+									placeholder="Amount per serving"
+									value={metadata.serving_size_value}
+									onChange={e => setMetadata(p => ({ ...p, serving_size_value: e.target.value }))}
+								/>
+								<Input
+									placeholder="Unit"
+									value={metadata.serving_size_unit}
+									onChange={e => setMetadata(p => ({ ...p, serving_size_unit: e.target.value }))}
+								/>
+							</div>
+						</div>
+					{/*	*/}
+
+					{/*	*/}
 					</div>
-					{/* Right: Preview */}
+
 					<div className="flex flex-col items-center col-span-2 ">
-						<h3 className="font-semibold mb-4">2. Preview Nutrition Label (CANADA)</h3>
-						<RecipeNutritionLabel profile={mixedRecipe} />
-					</div>
-					<div className="flex flex-col items-center col-span-2 ">
-						<h3 className="font-semibold mb-4">3. Preview Nutrition Label (US)</h3>
+						<h3 className="font-semibold mb-4"> Preview Nutrition Label </h3>
 						<RecipeNutritionLabel profile={mixedRecipe} />
 					</div>
 				</div>
 				<DialogFooter >
-					<div className=" w-full pt-8  flex gap-4">
+					<div className=" w-full pt-8  flex gap-4 max-h-min ">
 						<Button variant="outline" onClick={() => setIsOpen(false)} className="">Cancel</Button>
 						<Button onClick={handleSave} disabled={!mixedRecipe || !mixedRecipe.name || isSaving} className="flex">
 							{isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}

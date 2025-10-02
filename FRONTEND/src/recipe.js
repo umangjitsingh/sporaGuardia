@@ -10,22 +10,26 @@ function saveRecipes(recipes) {
 
 export const Recipe = {
 	schema: {
-		name: { type: 'string' },
-		serving_size: { type: 'string' },
-		image_url: { type: 'string' },
-		calories: { type: 'number' },
-		total_fat: { type: 'number' },
-		saturated_fat: { type: 'number' },
-		trans_fat: { type: 'number' },
-		cholesterol: { type: 'number' },
-		sodium: { type: 'number' },
+		name               : { type: 'string' },
+		serving_size       : { type: 'string' },
+		image_url          : { type: 'string' },
+		calories           : { type: 'number' },
+		total_fat          : { type: 'number' },
+		saturated_fat      : { type: 'number' },
+		trans_fat          : { type: 'number' },
+		cholesterol        : { type: 'number' },
+		sodium             : { type: 'number' },
 		total_carbohydrates: { type: 'number' },
-		dietary_fiber: { type: 'number' },
-		total_sugars: { type: 'number' },
-		protein: { type: 'number' },
-		potassium: { type: 'number' },
-		calcium: { type: 'number' },
-		iron: { type: 'number' }
+		dietary_fiber      : { type: 'number' },
+		total_sugars       : { type: 'number' },
+		protein            : { type: 'number' },
+		potassium          : { type: 'number' },
+		calcium            : { type: 'number' },
+		iron               : { type: 'number' },
+		is_prebuilt        : {
+			type   : 'boolean',
+			default: 'false'
+		}
 	},
 	async list(sortKey) {
 		const all = getStoredRecipes();
@@ -46,9 +50,9 @@ export const Recipe = {
 	async create(data) {
 		const newRecipe = {
 			...data,
-			id: Date.now().toString(),
+			id          : Date.now().toString(),
 			created_date: new Date().toISOString(),
-			created_by: data.created_by // ✅ Add this line
+			created_by  : data.created_by // ✅ Add this line
 		};
 		const all = getStoredRecipes();
 		all.push(newRecipe);

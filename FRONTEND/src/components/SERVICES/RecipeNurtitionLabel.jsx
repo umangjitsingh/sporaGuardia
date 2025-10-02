@@ -12,10 +12,12 @@ const DAILY_VALUES = {
 		sodium             : 2300,
 		total_carbohydrates: 275,
 		dietary_fiber      : 28,
+		added_sugars       : 50,
 		protein            : 50,
 		potassium          : 4700,
 		calcium            : 1300,
 		iron               : 18,
+		vitamin_d          : 20
 	},
 	CFIA: {
 		total_fat          : 75,
@@ -28,6 +30,7 @@ const DAILY_VALUES = {
 		potassium          : 3500,
 		calcium            : 1000,
 		iron               : 14,
+		vitamin_d          : 20
 	}
 };
 
@@ -56,11 +59,19 @@ export default function RecipeNutritionLabel({ profile }) {
 		return Math.round((amount / currentValues[nutrient]) * 100);
 	};
 
+	console.log(profile)
+
 	const formatValue = (value, unit) => {
 		const num = Number(value);
 		if (isNaN(num)) return `0${unit}`;
 		return `${num.toFixed(num % 1 === 0 ? 0 : 1)}${unit}`;
 	}
+
+
+	const addedSugars = () => {
+
+	};
+
 
 	if (!profile || !profile.name) {
 		return (
@@ -96,14 +107,14 @@ export default function RecipeNutritionLabel({ profile }) {
 			<div className="flex gap-2 justify-center">
 				<Button
 					size="sm"
-					variant={regulation === 'FDA' ? 'solid' : 'ghost'}
+					variant={regulation === 'FDA' ? 'solid' : 'outline'}
 					onClick={() => setRegulation('FDA')}
 				>
 					USA (FDA)
 				</Button>
 				<Button
 					size="sm"
-					variant={regulation === 'CFIA' ? 'solid' : 'ghost'}
+					variant={regulation === 'CFIA' ? 'solid' : 'outline'}
 					onClick={() => setRegulation('CFIA')}
 				>
 					Canada (CFIA)
@@ -117,8 +128,8 @@ export default function RecipeNutritionLabel({ profile }) {
 						<p className="text-4xl font-bold leading-6">{currentInfo.title}</p>
 						<p className="text-4xl font-bold ">Valeur nutritive</p>
 						<div className="border-b-3 border-black pb-1">
-							<p className="text-lg font-semibold tracking-tight ">Per{" "} {profile.serving_size || '1 serving'}</p>
-							<p className="text-lg font-semibold tracking-tight ">pour{" "} {profile.serving_size || '1 serving'}</p>
+							<p className="text-lg font-semibold tracking-tight ">Per{" "} {profile.serving_size_name || '1 serving'} {"("}{profile.serving_size_value || '400'}{profile.serving_size_unit || 'ml'}{")"}</p>
+							<p className="text-lg font-semibold tracking-tight ">pour{" "} {profile.serving_size_name || '1 serving'} {"("}{profile.serving_size_value || '400'}{profile.serving_size_unit || 'ml'}{")"}</p>
 						</div>
 
 						<div className="  py-0.5 flex items-center justify-between">
@@ -217,100 +228,122 @@ export default function RecipeNutritionLabel({ profile }) {
 						</div>
 					</div>
 				</Card> :
-				<Card className="w-full bg-white border-4 border-black p-0 font-serif">
-					<div className="p-3 space-y-1">
-						<h2 className="text-2xl font-black text-center">{currentInfo.title}</h2>
-
-						<div className="border-b-2 border-black pb-1">
-							<p className="text-sm font-bold">Per serving / Par portion</p>
-							<p className="text-sm">{profile.serving_size || '1 serving'}</p>
+				<Card className="w-full bg-white border-black p-0 font-inter scale-90">
+					<div className="p-3 space-y-1 border-8 ">
+						<h2 className="text-5xl font-black text-center border-b leading-12 tracking-tight">{currentInfo.title}</h2>
+						<div className="border-b-[1.2rem] border-black pb-1">
+							<p className="text-2xl font-medium tracking-tighter">
+								{Math.round(profile.total_weight / profile.serving_size_value)} Servings per {profile.container_name}
+							</p>
+							<div className="flex justify-between leading-5 pb-1">
+								<span className="text-2xl font-black tracking-tighter">Serving size</span>
+								<span className="text-2xl font-black tracking-tighter">
+      {profile.serving_size_name} ({profile.serving_size_value || '400'}{profile.serving_size_unit || 'ml'})
+    </span>
+							</div>
 						</div>
 
 						<div className="border-b-8 border-black py-1">
+							<div>
+								<p className="tracking-tight font-extrabold text-lg leading-2">Amount per serving</p>
+							</div>
 							<div className="flex justify-between items-baseline">
-								<span className="text-xl font-black">Calories / Calories</span>
-								<span className="text-3xl font-black">{profile.calories || 0}</span>
+								<span className="text-4xl font-black tracking-tighter">Calories</span>
+								<span className="text-5xl font-black">{Math.round(profile.calories || 0)}</span>
 							</div>
 						</div>
 
-						<div className="text-right text-xs font-bold border-b border-black pb-1">
-							% Daily Value* / % valeur quotidienne*
+						<div className="text-right text-base font-black border-b-2 border-black/60 pb-1">
+							% Daily Value*
 						</div>
 
-						<div className="space-y-0.5 text-sm">
+						<div className="space-y-0.5 text-lg">
 							{/* Total Fat */}
-							<div className="flex justify-between border-b border-gray-300 pb-0.5">
-								<span className="font-bold">Fat / Lipides {formatValue(profile.total_fat, 'g')}</span>
-								<span className="font-bold">{calculateDV('total_fat', profile.total_fat)}%</span>
+							<div className="flex justify-between border-b border-black pb-0.5 tracking-tight">
+								<span className="font-black">Total Fat <span className="font-medium">{formatValue(profile.total_fat, 'g')}</span></span>
+								<span className="font-black">{calculateDV('total_fat', profile.total_fat)}%</span>
 							</div>
 
 							{/* Saturated Fat */}
-							<div className="flex justify-between border-b border-gray-300 pb-0.5 pl-4">
-								<span>Saturated / saturés {formatValue(profile.saturated_fat, 'g')}</span>
-								<span className="font-bold">{calculateDV('saturated_fat', profile.saturated_fat)}%</span>
+							<div className="flex justify-between border-b border-black pb-0.5 pl-4 tracking-tight">
+								<span>Saturated Fat {formatValue(profile.saturated_fat, 'g')}</span>
+								<span className="font-black">{calculateDV('saturated_fat', profile.saturated_fat)}%</span>
 							</div>
 
 							{/* Trans Fat */}
-							<div className="border-b border-gray-300 pb-0.5 pl-4">
-								<span>+ Trans / trans {formatValue(profile.trans_fat, 'g')}</span>
+							<div className="border-b border-black pb-0.5 pl-4 tracking-tight">
+								<span>+ Trans Fat {formatValue(profile.trans_fat, 'g')}</span>
 							</div>
 
 							{/* Cholesterol */}
-							<div className="flex justify-between border-b border-gray-300 pb-0.5">
-								<span className="font-bold">Cholesterol / Cholestérol {formatValue(profile.cholesterol, 'mg')}</span>
-								<span className="font-bold">{calculateDV('cholesterol', profile.cholesterol)}%</span>
+							<div className="flex justify-between border-b border-black pb-0.5 tracking-tight">
+								<span className="font-black">Cholesterol <span className="font-normal">{formatValue(profile.cholesterol, 'mg')}</span></span>
+								<span className="font-black">{calculateDV('cholesterol', profile.cholesterol)}%</span>
 							</div>
 
 							{/* Sodium */}
-							<div className="flex justify-between border-b border-gray-300 pb-0.5">
-								<span className="font-bold">Sodium {formatValue(profile.sodium, 'mg')}</span>
-								<span className="font-bold">{calculateDV('sodium', profile.sodium)}%</span>
+							<div className="flex justify-between border-b border-black pb-0.5 tracking-tight">
+								<span className="font-black">Sodium <span className="font-normal">{formatValue(profile.sodium, 'mg')}</span></span>
+								<span className="font-black">{calculateDV('sodium', profile.sodium)}%</span>
 							</div>
 
 							{/* Carbohydrates */}
-							<div className="flex justify-between border-b border-gray-300 pb-0.5">
-								<span className="font-bold">Carbohydrate / Glucides {formatValue(profile.total_carbohydrates, 'g')}</span>
-								<span className="font-bold">{calculateDV('total_carbohydrates', profile.total_carbohydrates)}%</span>
+							<div className="flex justify-between border-b border-black pb-0.5 tracking-tight">
+								<span className="font-black">Total Carbohydrate  <span className="font-normal">{formatValue(profile.total_carbohydrates, 'g')}</span></span>
+								<span className="font-black">{calculateDV('total_carbohydrates', profile.total_carbohydrates)}%</span>
 							</div>
 
 							{/* Dietary Fiber */}
-							<div className="flex justify-between border-b border-gray-300 pb-0.5 pl-4">
-								<span>Fibre / Fibres {formatValue(profile.dietary_fiber, 'g')}</span>
+							<div className="flex justify-between border-b border-black pb-0.5 pl-4 tracking-tight">
+								<span>Dietary Fibre {formatValue(profile.dietary_fiber, 'g')}</span>
 								<span className="font-bold">{calculateDV('dietary_fiber', profile.dietary_fiber)}%</span>
 							</div>
 
 							{/* Total Sugars */}
-							<div className="border-b border-gray-300 pb-0.5 pl-4">
-								<span>Sugars / Sucres {formatValue(profile.total_sugars, 'g')}</span>
+							<div className=" pb-0.5 pl-4 tracking-tight">
+								<span>Total Sugars {formatValue(profile.total_sugars, 'g')}</span>
 							</div>
 
+							<div className=" pb-0.5 ml-12 border-t border-black tracking-tight flex justify-between">
+								<span>Includes {formatValue(profile.added_sugars, 'g')} Added Sugars</span>
+								<span className="font-black">{calculateDV('added_sugars', profile.added_sugars)}%</span>
+							</div>
+
+
 							{/* Protein */}
-							<div className={`border-b-4 border-black pb-1 ${currentInfo.showProteinDV ? 'flex justify-between' : ''}`}>
-								<span className="font-bold">Protein / Protéines {formatValue(profile.protein, 'g')}</span>
-								{currentInfo.showProteinDV && (
-									<span className="font-bold">{calculateDV('protein', profile.protein)}%</span>
-								)}
+							<div className={`border-b-[1.2rem] border-t border-black  tracking-tight ${currentInfo.showProteinDV ? 'flex justify-between' : ''}`}>
+								<span className="font-black">Protein <span className="font-normal">{formatValue(profile.protein, 'g')}</span></span>
+
 							</div>
 						</div>
 
 						{/* Additional Nutrients */}
-						<div className="border-t-2 border-black pt-1 space-y-0.5 text-sm">
-							<div className="flex justify-between">
-								<span className="font-medium text-[15px]">Potassium {formatValue(profile.potassium, 'mg')}</span>
-								<span>{calculateDV('potassium', profile.potassium)}%</span>
+						<div >
+
+							<div className="flex justify-between  ">
+								<span className="font-medium ">Vitamin D {formatValue(profile.vitamin_d, 'mcg')}</span>
+								<span>{calculateDV('vitamin_d', profile.vitamin_d)}%</span>
 							</div>
-							<div className="flex justify-between border-t border-gray-300 pt-0.5">
-								<span className="font-medium text-[15px]">Calcium {formatValue(profile.calcium, 'mg')}</span>
+
+							<div className="flex justify-between border-t border-b border-black pt-0.5">
+								<span className="font-medium ">Calcium {formatValue(profile.calcium, 'mg')}</span>
 								<span>{calculateDV('calcium', profile.calcium)}%</span>
 							</div>
-							<div className="flex justify-between border-t-2 border-gray-500 pt-0.5">
+							<div className="flex justify-between border-b border-black pb-0.5  tracking-tight">
 								<span>Iron / Fer {formatValue(profile.iron, 'mg')}</span>
 								<span>{calculateDV('iron', profile.iron)}%</span>
 							</div>
+
+							<div className="flex justify-between border-b-8 border-black pb-0.5  tracking-tight">
+								<span className="font-medium ">Potassium {formatValue(profile.potassium, 'mg')}</span>
+								<span>{calculateDV('potassium', profile.potassium)}%</span>
+							</div>
+
+
 						</div>
 
 						{/* Footer */}
-						<div className="text-xs pt-2 border-t-2 border-black mt-2 leading-tight">
+						<div className="text-sm font-medium tracking-tighter">
 							{currentInfo.footer}
 						</div>
 					</div>

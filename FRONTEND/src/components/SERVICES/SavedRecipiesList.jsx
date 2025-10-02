@@ -3,6 +3,7 @@ import  {Card} from '../ui/Card.jsx';
 import { CardContent } from '../ui/CardContent.jsx';
 import { Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
+import Badge from '../ui/Badge.jsx'
 
 export default function SavedRecipesList({ recipes, onSelect, selectedId, isLoading }) {
 	if (isLoading) {
@@ -27,8 +28,11 @@ export default function SavedRecipesList({ recipes, onSelect, selectedId, isLoad
 		);
 	}
 
+
+
+
 	return (
-		<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+		<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4  pt-2">
 			{recipes.map(recipe => (
 				<Card
 					key={recipe.id}
@@ -38,16 +42,15 @@ export default function SavedRecipesList({ recipes, onSelect, selectedId, isLoad
 					}`}
 				>
 					<CardContent className="p-4 flex items-center gap-4">
-						{recipe.image_url ? (
-							<img src={recipe.image_url} alt={recipe.name} className="w-16 h-16 rounded-md object-cover" />
-						) : (
-							<div className="w-16 h-16 rounded-md bg-gray-200 flex items-center justify-center text-gray-400">
-								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M20.4 14.5L16 10 4 20"/></svg>
-							</div>
-						)}
-						<div className="flex-1">
+
+						<div className="flex w-full items-center justify-between overflow-hidden ">
 							<p className="font-semibold text-gray-800 truncate">{recipe.name}</p>
-							<p className="text-sm text-gray-500">{format(new Date(recipe.created_date), 'MMM d, yyyy')}</p>
+								<p className="text-sm text-gray-500">{recipe.is_prebuilt ? 'Base Recipe' : format(new Date(recipe.created_date), 'MMM d, yyyy')}</p>
+								{recipe.is_prebuilt && (
+									<Badge variant="secondary" className="text-blue-600 bg-blue-50 px-1.5 py-0">
+										<ShieldCheck className="w-3 h-3"/>
+									</Badge>
+								)}
 						</div>
 					</CardContent>
 				</Card>
@@ -55,5 +58,4 @@ export default function SavedRecipesList({ recipes, onSelect, selectedId, isLoad
 		</div>
 	);
 }
-
 
