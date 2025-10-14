@@ -4,7 +4,8 @@ import  Button  from '../components/Button.jsx';
 import { Beaker, Dna, Lock, FileText, Loader2, AlertTriangle } from 'lucide-react';
 import ResearcherZone from './ResearcherZone.jsx';
 import { useNavigate } from 'react-router-dom';
-
+import RecipeNutritionLabel from '../components/SERVICES/RecipeNurtitionLabel.jsx';
+import fda from "../assets/fda.jpg"
 
 
 
@@ -56,10 +57,14 @@ const navigate=useNavigate()
 				))}
 			</div>
 
-			<div className="bg-gradient-to-r from-[#bdc3c7] to-[#f2f2f2] rounded-lg p-12 ">
-				<div className="flex items-center gap-2 sm:gap-4 mb-4 mt-6 pl-20 pb-12">
-					<FileText className="h-5 w-5 sm:w-8 sm:h-8 text-zinc-700" />
-					<h2 className="text-xl font-semibold sm:text-3xl sm:font-bold text-gray-700 tracking-tight ">Recipe Nutrition Facts Tool</h2>
+			<div className="bg-gradient-to-r from-[#dedede] to-[#dedede] rounded-lg p-12 shadow-md border border-gray-300">
+				<div className="flex items-center sm:gap-24 my-2  pb-8">
+					<img className="w-32 h-64" src={fda} alt={""}/>
+					<div>
+						<h2 className="text-xl font-semibold sm:text-3xl sm:font-bold text-gray-800 tracking-tight ">Recipe Nutrition Facts Tool</h2>
+						<p className="text-gray-600 pt-2 font-medium">Built for food creators, trusted by regulators—your go-to tool for nutrition transparency.</p>
+					</div>
+
 				</div>
 				{loading ? (
 					<div className="flex justify-center items-center h-40">
@@ -75,6 +80,7 @@ const navigate=useNavigate()
 						<div className="p-6 text-center">
 							<AlertTriangle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
 							<h3 className="text-xl font-semibold text-yellow-800">Exclusive Researcher Tool</h3>
+
 							<p className="text-yellow-700 mt-2 mb-4">
 								This nutrition calculator is a secure tool available only for our registered research partners.
 							</p>
