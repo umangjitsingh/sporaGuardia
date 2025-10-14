@@ -1,0 +1,24 @@
+@media print {
+    body {
+        margin: 0;
+        padding: 0;
+        background: white;
+    }
+
+    .printable-label {
+        width: 375px; /* Match your max-w-sm */
+        padding: 16px;
+        margin: auto;
+        box-sizing: border-box;
+    }
+
+    /* Optional: remove buttons or UI elements */
+    .no-print {
+        display: none !important;
+    }
+
+    /* Optional: scale down if needed */
+    html {
+        zoom: 0.85;
+    }
+}

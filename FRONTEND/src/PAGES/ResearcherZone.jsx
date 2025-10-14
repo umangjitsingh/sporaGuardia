@@ -99,15 +99,15 @@ export default function ResearcherZone() {
 	}
 
 	return (<div className="p-16  ">
-			<div className="space-y-6 ">
+			<div className="space-y-4 ">
 
 
-				<div className="bg-gradient-to-r from-gray-100 to-gray-300 p-12 rounded-xl shadow-lg mb-12">
-					<h1 className="text-4xl font-bold text-gray-800 flex items-center gap-4 tracking-tight">
-						<img src={leaf} alt="" className="h-16 w-20" />
+				<div className="bg-gradient-to-r from-gray-100 to-gray-300 px-12 py-8 rounded-xl shadow-lg mb-12">
+					<h1 className="text-3xl font-bold text-gray-800 flex items-center gap-4 tracking-tight">
+						<img src={leaf} alt="" className="h-14 w-20" />
 						Nutrition Facts Calculator
 					</h1>
-					<p className="mt-4 text-lg text-gray-700 font-medium">
+					<p className="mt-3 text-lg text-gray-700 font-medium">
 						Analyze, optimize, and visualize your recipes with precision.
 					</p>
 				</div>
@@ -119,7 +119,7 @@ export default function ResearcherZone() {
 
 					<Input
 						placeholder="Search recipes..."
-						className="pl-9 w-full sm:w-96 md:w-full bg-zinc-100 outline-none "
+						className="pl-9 py-4 w-full sm:w-96 md:w-full  outline-none bg-zinc-50 shadow-sm"
 						value={searchTerm}
 						onChange={(e) => setSearchTerm(e.target.value)}
 					/>
