@@ -223,10 +223,10 @@ export default function RecipeNutritionLabel({ profile }) {
 							</div>
 						</Card>
 					 ) : (
-						<Card className="w-full bg-white border-black p-0 font-inter scale-90">
-							<div className="p-3 space-y-1 border-8 ">
+						<Card className="w-full bg-white border-black -my-8 p-0 font-inter scale-90">
+							<div className="p-3 space-y-0 border-8 ">
 								<h2 className="text-5xl font-black text-center border-b leading-12 tracking-tight">{currentInfo.title}</h2>
-								<div className="border-b-[1.2rem] border-black pb-1">
+								<div className="border-b-[1.1rem] border-black pb-1">
 									<p className="text-2xl font-medium tracking-tighter">
 										{Math.round(profile.total_weight / profile.serving_size_value)} Servings per {profile.container_name}
 									</p>
@@ -306,7 +306,7 @@ export default function RecipeNutritionLabel({ profile }) {
 
 
 									{/* Protein */}
-									<div className={`border-b-[1.2rem] border-t border-black  tracking-tight ${currentInfo.showProteinDV ? 'flex justify-between' : ''}`}>
+									<div className={`border-b-[1.1rem] border-t border-black  tracking-tight ${currentInfo.showProteinDV ? 'flex justify-between' : ''}`}>
 										<span className="font-black">Protein <span className="font-normal">{formatValue(profile.protein, 'g')}</span></span>
 
 									</div>
@@ -349,7 +349,7 @@ export default function RecipeNutritionLabel({ profile }) {
 
 
 
-			<Button onClick={handlePrint} className="no-print">Print or Save PDF</Button>
+			<Button onClick={handlePrint} className="no-print -mt-1">Print or Save PDF</Button>
 
 
 

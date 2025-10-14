@@ -172,7 +172,7 @@ export default function ResearcherZone() {
 							selectedRecipe={selectedRecipe}
 						/>
 						<div className="sticky top-24">
-							<h3 className="text-xl font-semibold text-gray-700 mb-4 text-center">Live Preview</h3>
+							<h3 className="text-xl font-semibold text-gray-700 mb-4 text-center mt-4">Live Preview</h3>
 							<div className="flex justify-center">
 								<RecipeNutritionLabel profile={currentRecipeData} />
 							</div>
