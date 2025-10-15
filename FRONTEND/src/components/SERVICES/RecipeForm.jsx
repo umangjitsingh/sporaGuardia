@@ -56,11 +56,58 @@ export default function RecipeForm({ onUpdate, onSaveSuccess, onDeleteSuccess, s
 
 	const handleInputChange = (e) => {
 		const { id, value, type } = e.target;
-		const new_val = type === 'number' ? parseFloat(value) || 0 : value;
+		// const new_val = type === 'number' ? parseFloat(value) || 0 : value;
+		const new_val = type === 'number' ? (value === '' ? '' : (parseFloat(value) || 0)) : value;
 		const updated = { ...formData, [id]: new_val };
 		setFormData(updated);
 		onUpdate(updated);
 	};
+	//
+	const nutrientFields = [
+		{ id: 'calories', label: 'Calories', unit: 'kcal' },
+		{ id: 'total_fat', label: 'Total Fat', unit: 'g' },
+		{ id: 'saturated_fat', label: 'Saturated Fat', unit: 'g' },
+		{ id: 'trans_fat', label: 'Trans Fat', unit: 'g' },
+		{ id: 'total_carbohydrates', label: 'Total Carbs', unit: 'g' },
+		{ id: 'dietary_fiber', label: 'Dietary Fiber', unit: 'g' },
+		{ id: 'total_sugars', label: 'Total Sugars', unit: 'g' },
+		{ id: 'added_sugars', label: 'Added Sugars', unit: 'g' },
+		{ id: 'protein', label: 'Protein', unit: 'g' },
+	];
+
+	const mineralFields = [
+		{ id: 'cholesterol', label: 'Cholesterol', unit: 'mg' },
+		{ id: 'sodium', label: 'Sodium', unit: 'mg' },
+		{ id: 'potassium', label: 'Potassium', unit: 'mg' },
+		{ id: 'calcium', label: 'Calcium', unit: 'mg' },
+		{ id: 'iron', label: 'Iron', unit: 'mg' },
+		{ id: 'vitamin_d', label: 'Vitamin D', unit: 'mcg' },
+	];
+
+	// Helper to determine if an ID is one of the numeric fields that should clear '0'
+	const isClearableNumericField = (id) => {
+		return [...nutrientFields, ...mineralFields].some(field => field.id === id);
+	};
+
+	const handleFocus = (e) => {
+		const { id, value } = e.target;
+		if (isClearableNumericField(id) && parseFloat(value) === 0) {
+			const updated = { ...formData, [id]: '' };
+			setFormData(updated);
+			onUpdate(updated); // Update preview
+		}
+	};
+
+	const handleBlur = (e) => {
+		const { id, value } = e.target;
+		if (isClearableNumericField(id) && value === '') {
+			const updated = { ...formData, [id]: 0 };
+			setFormData(updated);
+			onUpdate(updated); // Update preview
+		}
+	};
+
+	//
 
 
 	const handleSave = async () => {
@@ -152,7 +199,7 @@ export default function RecipeForm({ onUpdate, onSaveSuccess, onDeleteSuccess, s
 					{inputFields.map(field => (
 						<div key={field.id} className="space-y-1">
 							<Label htmlFor={field.id} className="text-sm">{field.label} ({field.unit})</Label>
-							<Input id={field.id} type="number" value={formData[field.id]} onChange={handleInputChange} min="0" step="0.1"/>
+							<Input id={field.id} type="number" value={formData[field.id]} onChange={handleInputChange} onFocus={handleFocus} onBlur={handleBlur} min="0" step="0.1"/>
 						</div>
 					))}
 				</div>
