@@ -1,0 +1,25 @@
+import jwt from "jsonwebtoken";
+import User from "../schema/user.js";
+
+
+const userAuth = async (req, res, next) => {
+	try {
+		const {token} = req.cookies;
+
+
+		if (!token) {
+			return res.status(401).send("Please, login again");
+		}
+		const decodeToken = await jwt.verify(token, process.env.JWT_SECRET);
+		const {id} = decodeToken;
+		const user = await User.findOne({_id: id})
+		if (!user) {
+			throw new Error("User not found..")
+		}
+		req.user = user;
+		next()
+	} catch (e) {
+		return res.status(400).send(e.message)
+	}
+}
+export default userAuth;
